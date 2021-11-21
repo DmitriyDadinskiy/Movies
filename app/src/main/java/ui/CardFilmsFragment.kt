@@ -12,7 +12,9 @@ import com.kotlinmovie.movies.databinding.FragmentCardFilmsBinding
 class CardFilmsFragment : Fragment(R.layout.fragment_card_films) {
 
     private var viewBinding: FragmentCardFilmsBinding? = null
-
+    companion object {
+        const val imagefilm = "imageFilm"
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 

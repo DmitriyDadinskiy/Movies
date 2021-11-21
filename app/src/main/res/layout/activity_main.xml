@@ -1,53 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="4dp"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/activity_main"
-    tools:context="ui.MainActivity">
+    tools:context="ui.MainActivity"
+    tools:showIn="@layout/activity_main">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
         android:text="@string/watching_now"
+        android:gravity="bottom"
         android:textSize="@dimen/header_size" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_lines1"
+        android:id="@+id/watching_now_recycler_view_"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:orientation="horizontal"
-        android:scrollbars= "horizontal"
-        tools:listitem="@layout/item" />
+        android:layout_weight="1"
+        tools:listitem="@layout/item_watching_now" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:textSize="@dimen/header_size"
-        android:text="@string/recommendations">
+        android:text="@string/recommendations"
+        android:textSize="@dimen/header_size">
 
     </TextView>
+
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_lines2"
+        android:id="@+id/recommendation_recycler_view_"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:layout_margin="16dp"
+        android:layout_weight="1"
         android:orientation="horizontal"
-        tools:listitem="@layout/item" />
+        tools:listitem="@layout/item_recommendation" />
+
+</LinearLayout>
+
+    </ScrollView>
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:alpha="0.5">
+        android:layout_alignParentBottom="true"
+        android:alpha="0.8"
+        android:background="#DAD5D5"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/home_button"
@@ -57,6 +72,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/button_home" />
+
         <Button
             android:id="@+id/favorites_button"
             style="?android:attr/buttonBarButtonStyle"
@@ -65,6 +81,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/button_favorites" />
+
         <Button
             android:id="@+id/ratings_button"
             style="?android:attr/buttonBarButtonStyle"
@@ -76,4 +93,4 @@
 
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

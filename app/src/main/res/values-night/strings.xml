@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="button_add">Home</string>
+    <string name="button_home">Home</string>
     <string name="button_favorites">Favorites</string>
     <string name="search">Поиск</string>
     <string name="watching_now">Смотрят сейчас</string>
     <string name="recommendations">Рекомендации</string>
+    <string name="film_card_duration_textView">116 мин</string>
+    <string name="films_card_budget">Бюджет:</string>
+    <string name="film_card_feel">Сборы:</string>
+    <string name="film_card_release_date">Дата релиза</string>
 </resources>
