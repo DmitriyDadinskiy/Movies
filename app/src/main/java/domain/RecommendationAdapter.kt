@@ -3,6 +3,7 @@ package domain
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.kotlinmovie.movies.R
@@ -20,6 +21,7 @@ class RecommendationAdapter : RecyclerView.Adapter<RecommendationAdapter.Recomme
         private val filmItemImageRecommendation: ImageView = itemView.findViewById(R.id.film_recommendation_item_image
         )
         private val binding = ItemRecommendationBinding.bind(item)
+         private val filmRecommendationFavorites: ImageButton = binding.filmRecommendationCardFavoritesImageButton
         fun bind(recommendation: FilmsListRecommendation) = with(binding){
            filmRecommendationItemImage.setImageResource(recommendation.imageId)
             filmRecommendationNameItemTextView.text = recommendation.filmName
@@ -29,6 +31,9 @@ class RecommendationAdapter : RecyclerView.Adapter<RecommendationAdapter.Recomme
         init {
             filmItemImageRecommendation.setOnClickListener{
                 onClickListener?.onClick(adapterPosition)
+            }
+            filmRecommendationFavorites.setOnClickListener{
+                onClickListener?.onClickImageButton(adapterPosition)
             }
         }
 

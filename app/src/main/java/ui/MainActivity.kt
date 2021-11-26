@@ -1,13 +1,17 @@
 package ui
 
-import androidx.appcompat.app.AppCompatActivity
+
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.kotlinmovie.movies.R
 import com.kotlinmovie.movies.databinding.ActivityMainBinding
 import data.CLickOnRecommendationImage
@@ -16,10 +20,12 @@ import data.FilmsListWatchingNow
 import domain.RecommendationAdapter
 import domain.WatchingNowAdapter
 
+
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val adapterWatchingNow = WatchingNowAdapter()
     private val adapterRecommendation = RecommendationAdapter()
+    private lateinit var mySnackbarLayot: CoordinatorLayout
     private val imageFilmsWatchingNow = listOf(
         R.drawable.joker,
         R.drawable.joker1,
@@ -43,48 +49,76 @@ class MainActivity : AppCompatActivity() {
         init()
 
     }
-    private fun init(){
+
+    private fun init() {
         initViewWatchingNow()
         initViewRecommendation()
         startCardFilmFragment()
+        initButton()
     }
+
+    private fun initButton() {
+        mySnackbarLayot = binding.snackbarLayout
+    }
+
 
     private fun startCardFilmFragment() {
         val intent = intent
-        adapterRecommendation.setClickOnRecommendationImage(object : CLickOnRecommendationImage{
+        adapterRecommendation.setClickOnRecommendationImage(object : CLickOnRecommendationImage {
             override fun onClick(imageId: Int) {
                 intent.setClass(this@MainActivity, ActivityStartFilmsCard::class.java)
-                intent.putExtra(CardFilmsFragment.imagefilm,imageId)
+                intent.putExtra(CardFilmsFragment.imagefilm, imageId)
                 startActivity(intent)
 
                 Toast.makeText(applicationContext, "Рекомендации", Toast.LENGTH_LONG).show()
             }
 
+            override fun onClickImageButton(favoritesID: Int) {
+                Snackbar.make(
+                    mySnackbarLayot,
+                    resources.getString(R.string.button_favorites),
+                    Snackbar.LENGTH_INDEFINITE)
+                    .setDuration(10000)
+                    .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_FADE)
+                    .show()
+            }
+
         })
-        adapterWatchingNow.setClickWatchingNow(object : WatchingNowAdapter.CLickOnWatchingNowImage{
+        adapterWatchingNow.setClickWatchingNow(object : WatchingNowAdapter.CLickOnWatchingNowImage {
             override fun onClick(imageId: Int) {
                 intent.setClass(this@MainActivity, ActivityStartFilmsCard::class.java)
-                intent.putExtra(CardFilmsFragment.imagefilm,imageId)
+                intent.putExtra(CardFilmsFragment.imagefilm, imageId)
                 startActivity(intent)
 
                 Toast.makeText(applicationContext, "Смотрят сейчас", Toast.LENGTH_LONG).show()
+            }
+
+            override fun onClickFavorites(favoritesID: Int) {
+                Snackbar.make(
+                    mySnackbarLayot,
+                    resources.getString(R.string.button_favorites),
+                    Snackbar.LENGTH_LONG)
+                    .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
+                    .show()
             }
 
         })
     }
 
     private fun initViewRecommendation() {
-       binding.apply {
-           recommendationRecyclerView.layoutManager = LinearLayoutManager(
-               this@MainActivity,LinearLayoutManager.HORIZONTAL, false
-           )
-           recommendationRecyclerView.adapter = adapterRecommendation
-           for (index in imageFilmsRecommendation.indices){
-               val recommendation = FilmsListRecommendation(imageFilmsRecommendation[index],
-               "Joker $index++", "2020", "8.8")
-               adapterRecommendation.addAllFilmsRecommendation(recommendation)
-           }
-       }
+        binding.apply {
+            recommendationRecyclerView.layoutManager = LinearLayoutManager(
+                this@MainActivity, LinearLayoutManager.HORIZONTAL, false
+            )
+            recommendationRecyclerView.adapter = adapterRecommendation
+            for (index in imageFilmsRecommendation.indices) {
+                val recommendation = FilmsListRecommendation(
+                    imageFilmsRecommendation[index],
+                    "Joker $index", "2020", "8.8"
+                )
+                adapterRecommendation.addAllFilmsRecommendation(recommendation)
+            }
+        }
     }
 
     private fun initViewWatchingNow() {
@@ -98,7 +132,7 @@ class MainActivity : AppCompatActivity() {
             for (index in imageFilmsWatchingNow.indices) {
                 val filmsListWatchingNow = FilmsListWatchingNow(
                     imageFilmsWatchingNow[index],
-                    "Joker $index","2020", "9.9"
+                    "Joker $index", "2020", "9.9"
                 )
                 adapterWatchingNow.addAllFilmsWatchingNow(filmsListWatchingNow)
 
@@ -135,8 +169,9 @@ class MainActivity : AppCompatActivity() {
         })
         return super.onCreateOptionsMenu(menu)
     }
-}
 
+
+}
 private fun View.setOnQueryTextListener(onQueryTextListener: SearchView.OnQueryTextListener) {
 
 }
