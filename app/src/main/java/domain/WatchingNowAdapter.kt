@@ -3,6 +3,7 @@ package domain
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.kotlinmovie.movies.R
@@ -17,6 +18,7 @@ class WatchingNowAdapter:
 
     inner class WatchingHolder(item: View): RecyclerView.ViewHolder(item) {
         private val filmItemImage: ImageView = itemView.findViewById(R.id.film_item_image)
+        private val filmWatchingNowFavorites: ImageButton = itemView.findViewById(R.id.film_card_favorites_imageButton)
         private val binding = ItemWatchingNowBinding.bind(item)
 
         fun bind(filmsListWatchingNow: FilmsListWatchingNow)
@@ -30,6 +32,9 @@ class WatchingNowAdapter:
         init {
             filmItemImage.setOnClickListener{
                 onClickListenerWatchingNowImage?.onClick(adapterPosition)
+            }
+            filmWatchingNowFavorites.setOnClickListener{
+                onClickListenerWatchingNowImage?.onClickFavorites(adapterPosition)
             }
         }
     }
@@ -57,6 +62,7 @@ class WatchingNowAdapter:
     }
     interface CLickOnWatchingNowImage {
         fun onClick(imageId: Int)
+        fun onClickFavorites(favoritesID: Int)
 
     }
 
