@@ -1,4 +1,4 @@
-package ui
+package com.kotlinmovie.movies.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

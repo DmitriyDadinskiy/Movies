@@ -1,4 +1,4 @@
-package domain
+package com.kotlinmovie.movies.domain
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +8,9 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.kotlinmovie.movies.R
 import com.kotlinmovie.movies.databinding.ItemWatchingNowBinding
-import data.FilmsListWatchingNow
+import com.kotlinmovie.movies.data.FilmsListWatchingNow
+
+
 
 class WatchingNowAdapter:
     RecyclerView.Adapter<WatchingNowAdapter.WatchingHolder>() {
@@ -23,11 +25,13 @@ class WatchingNowAdapter:
 
         fun bind(filmsListWatchingNow: FilmsListWatchingNow)
         = with(binding){
-            filmItemImage.setImageResource(filmsListWatchingNow.imageId)
-            filmNameItemTextView.text = filmsListWatchingNow.filmName
-            yearFilmTextView.text = filmsListWatchingNow.filmYear
-            ratingTextView.text = filmsListWatchingNow.rating
+         //   filmItemImage.setImageResource(imageFilmsCard.imageId) //тут будет постер фильма
+            filmNameItemTextView.text = filmsListWatchingNow.title
+            yearFilmTextView.text = filmsListWatchingNow.release_date
+            ratingTextView.text = filmsListWatchingNow.vote_average.toString()
         }
+
+
 
         init {
             filmItemImage.setOnClickListener{
@@ -52,10 +56,12 @@ class WatchingNowAdapter:
     override fun getItemCount(): Int {
         return watchingNowAdapterList.size
     }
-    fun addAllFilmsWatchingNow(filmsListWatchingNow: FilmsListWatchingNow){
-        watchingNowAdapterList.addAll(listOf(filmsListWatchingNow))
+    fun addAllFilmsWatchingNow(filmsListWatchingNow: MutableList<FilmsListWatchingNow>){
+        watchingNowAdapterList.addAll(filmsListWatchingNow)
         notifyDataSetChanged()
     }
+
+
     fun setClickWatchingNow(onClickListenerWatchingNowImage: CLickOnWatchingNowImage){
         this.onClickListenerWatchingNowImage = onClickListenerWatchingNowImage
 
@@ -67,6 +73,8 @@ class WatchingNowAdapter:
     }
 
 }
+
+
 
 
 

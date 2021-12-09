@@ -3,11 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ui.ActivityStartFilmsCard">
+    tools:context="com.kotlinmovie.movies.ui.ActivityStartFilmsCard">
 
     <fragment
         android:id="@+id/card_film_fragment"
-        android:name="ui.CardFilmsFragment"
+        android:name="com.kotlinmovie.movies.ui.CardFilmsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

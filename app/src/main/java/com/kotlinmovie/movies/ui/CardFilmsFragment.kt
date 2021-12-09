@@ -1,10 +1,8 @@
-package ui
+package com.kotlinmovie.movies.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import com.kotlinmovie.movies.R
 import com.kotlinmovie.movies.databinding.FragmentCardFilmsBinding
 

@@ -1,4 +1,4 @@
-package domain
+package com.kotlinmovie.movies.domain
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,8 +8,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.kotlinmovie.movies.R
 import com.kotlinmovie.movies.databinding.ItemRecommendationBinding
-import data.CLickOnRecommendationImage
-import data.FilmsListRecommendation
+import com.kotlinmovie.movies.data.FilmsListRecommendation
 
 
 
