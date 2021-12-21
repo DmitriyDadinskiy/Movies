@@ -1,4 +1,4 @@
-package ui
+package com.kotlinmovie.movies.ui
 
 
 import android.os.Bundle
@@ -13,12 +13,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.kotlinmovie.movies.R
+import com.kotlinmovie.movies.app
 import com.kotlinmovie.movies.databinding.ActivityMainBinding
-import data.CLickOnRecommendationImage
-import data.FilmsListRecommendation
-import data.FilmsListWatchingNow
-import domain.RecommendationAdapter
-import domain.WatchingNowAdapter
+import com.kotlinmovie.movies.domain.CLickOnRecommendationImage
+import com.kotlinmovie.movies.data.FilmsListRecommendation
+import com.kotlinmovie.movies.data.LoadFilmsError
+import com.kotlinmovie.movies.domain.GivRateFilmsRepoTMDB
+import com.kotlinmovie.movies.domain.RecommendationAdapter
+import com.kotlinmovie.movies.domain.WatchingNowAdapter
 
 
 class MainActivity : AppCompatActivity() {
@@ -26,21 +28,24 @@ class MainActivity : AppCompatActivity() {
     private val adapterWatchingNow = WatchingNowAdapter()
     private val adapterRecommendation = RecommendationAdapter()
     private lateinit var mySnackbarLayot: CoordinatorLayout
-    private val imageFilmsWatchingNow = listOf(
-        R.drawable.joker,
-        R.drawable.joker1,
-        R.drawable.joker2,
-        R.drawable.joker2,
-        R.drawable.joker1,
-        R.drawable.joker2,
-        R.drawable.joker1,
-        R.drawable.joker2,
-    )
     private val imageFilmsRecommendation = listOf(
         R.drawable.joker,
         R.drawable.joker1,
         R.drawable.joker2,
     )
+    private val givRateFilmsTMDB: GivRateFilmsRepoTMDB by lazy { app.givRateFilmsRepoTMDB }
+    private val filmsError: LoadFilmsError = object : LoadFilmsError {
+        override fun loadFilmsError() {
+            Snackbar.make(
+                mySnackbarLayot,
+                "ID фильма не существует, загрузка остановлена",
+                Snackbar.LENGTH_LONG
+            )
+                .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
+                .show()
+        }
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,12 +60,13 @@ class MainActivity : AppCompatActivity() {
         initViewRecommendation()
         startCardFilmFragment()
         initButton()
+
     }
+
 
     private fun initButton() {
         mySnackbarLayot = binding.snackbarLayout
     }
-
 
     private fun startCardFilmFragment() {
         val intent = intent
@@ -77,7 +83,8 @@ class MainActivity : AppCompatActivity() {
                 Snackbar.make(
                     mySnackbarLayot,
                     resources.getString(R.string.button_favorites),
-                    Snackbar.LENGTH_INDEFINITE)
+                    Snackbar.LENGTH_INDEFINITE
+                )
                     .setDuration(10000)
                     .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_FADE)
                     .show()
@@ -97,7 +104,8 @@ class MainActivity : AppCompatActivity() {
                 Snackbar.make(
                     mySnackbarLayot,
                     resources.getString(R.string.button_favorites),
-                    Snackbar.LENGTH_LONG)
+                    Snackbar.LENGTH_LONG
+                )
                     .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
                     .show()
             }
@@ -122,6 +130,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initViewWatchingNow() {
+
         binding.apply {
             watchingNowRecyclerView.layoutManager = LinearLayoutManager(
                 this@MainActivity,
@@ -129,22 +138,25 @@ class MainActivity : AppCompatActivity() {
             )
             watchingNowRecyclerView.adapter = adapterWatchingNow
 
-            for (index in imageFilmsWatchingNow.indices) {
-                val filmsListWatchingNow = FilmsListWatchingNow(
-                    imageFilmsWatchingNow[index],
-                    "Joker $index", "2020", "9.9"
-                )
-                adapterWatchingNow.addAllFilmsWatchingNow(filmsListWatchingNow)
+            Thread {
 
-            }
+                val categoryFilms = String()
+                val filmsList = givRateFilmsTMDB.getRateFilms(categoryFilms)
+
+                runOnUiThread {
+                    adapterWatchingNow.addAllFilmsWatchingNow(filmsList)
+                }
+                filmsError.loadFilmsError()//выводит закусочную всегда
+
+            }.start()
         }
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         when (item.itemId) {
             R.id.menu_info ->
-
                 Toast.makeText(
                     applicationContext, "not realize",
                     Toast.LENGTH_LONG
@@ -172,6 +184,7 @@ class MainActivity : AppCompatActivity() {
 
 
 }
+
 private fun View.setOnQueryTextListener(onQueryTextListener: SearchView.OnQueryTextListener) {
 
 }

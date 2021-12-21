@@ -1,4 +1,4 @@
-package ui
+package com.kotlinmovie.movies.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
