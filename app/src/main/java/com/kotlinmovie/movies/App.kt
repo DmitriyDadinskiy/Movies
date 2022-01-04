@@ -7,7 +7,7 @@ import com.kotlinmovie.movies.domain.GivRateFilmsRepoTMDB
 
 class App : Application() {
     val givRateFilmsRepoTMDB: GivRateFilmsRepoTMDB by lazy {
-        WebGivFilmsTopRatedImpl(null)
+        WebGivFilmsTopRatedImpl()
     }
 
 

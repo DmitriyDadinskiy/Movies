@@ -1,11 +1,13 @@
 package com.kotlinmovie.movies.domain
 
 import androidx.annotation.WorkerThread
-import com.kotlinmovie.movies.data.FilmsListWatchingNow
+import kotlin.jvm.Throws
 
 
 interface GivRateFilmsRepoTMDB {
     @WorkerThread
-    fun getRateFilms(categoryFilms: String): MutableList<FilmsListWatchingNow>
+    @Throws(Throwable::class)
+    fun getRateFilms(categoryFilms: List<FilmsListWatchingNow>,
+                     onError: (Throwable) -> Unit): MutableList<FilmsListWatchingNow>
 
 }
