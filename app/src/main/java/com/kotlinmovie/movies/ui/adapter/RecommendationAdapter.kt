@@ -1,4 +1,4 @@
-package com.kotlinmovie.movies.domain
+package com.kotlinmovie.movies.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,8 +8,8 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.kotlinmovie.movies.R
 import com.kotlinmovie.movies.databinding.ItemRecommendationBinding
-import com.kotlinmovie.movies.data.FilmsListRecommendation
-
+import com.kotlinmovie.movies.domain.CLickOnRecommendationImage
+import com.kotlinmovie.movies.domain.FilmsListRecommendation
 
 
 class RecommendationAdapter : RecyclerView.Adapter<RecommendationAdapter.RecommendationHolder>(){
@@ -21,12 +21,14 @@ class RecommendationAdapter : RecyclerView.Adapter<RecommendationAdapter.Recomme
         )
         private val binding = ItemRecommendationBinding.bind(item)
          private val filmRecommendationFavorites: ImageButton = binding.filmRecommendationCardFavoritesImageButton
+
         fun bind(recommendation: FilmsListRecommendation) = with(binding){
            filmRecommendationItemImage.setImageResource(recommendation.imageId)
             filmRecommendationNameItemTextView.text = recommendation.filmName
             yearRecommendationFilmTextView.text = recommendation.filmYear
             ratingRecommendationTextView.text = recommendation.rating
         }
+
         init {
             filmItemImageRecommendation.setOnClickListener{
                 onClickListener?.onClick(adapterPosition)

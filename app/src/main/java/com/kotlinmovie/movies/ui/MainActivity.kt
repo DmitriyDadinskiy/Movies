@@ -1,6 +1,8 @@
 package com.kotlinmovie.movies.ui
 
 
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -14,13 +16,14 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.kotlinmovie.movies.R
 import com.kotlinmovie.movies.app
+import com.kotlinmovie.movies.data.ConnectivityManagerCheckInternet
 import com.kotlinmovie.movies.databinding.ActivityMainBinding
 import com.kotlinmovie.movies.domain.CLickOnRecommendationImage
-import com.kotlinmovie.movies.data.FilmsListRecommendation
-import com.kotlinmovie.movies.data.LoadFilmsError
+import com.kotlinmovie.movies.domain.FilmsListRecommendation
+import com.kotlinmovie.movies.domain.FilmsListWatchingNow
 import com.kotlinmovie.movies.domain.GivRateFilmsRepoTMDB
-import com.kotlinmovie.movies.domain.RecommendationAdapter
-import com.kotlinmovie.movies.domain.WatchingNowAdapter
+import com.kotlinmovie.movies.ui.adapter.RecommendationAdapter
+import com.kotlinmovie.movies.ui.adapter.WatchingNowAdapter
 
 
 class MainActivity : AppCompatActivity() {
@@ -33,26 +36,25 @@ class MainActivity : AppCompatActivity() {
         R.drawable.joker1,
         R.drawable.joker2,
     )
+    private val receiver = ConnectivityManagerCheckInternet()
     private val givRateFilmsTMDB: GivRateFilmsRepoTMDB by lazy { app.givRateFilmsRepoTMDB }
-    private val filmsError: LoadFilmsError = object : LoadFilmsError {
-        override fun loadFilmsError() {
-            Snackbar.make(
-                mySnackbarLayot,
-                "ID фильма не существует, загрузка остановлена",
-                Snackbar.LENGTH_LONG
-            )
-                .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
-                .show()
-        }
-
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        registerReceiver(
+            receiver,
+            IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        )//подписка на широковещательные сообщения
+
         init()
 
+    }
+
+    override fun onDestroy() {
+        unregisterReceiver(receiver)
+        super.onDestroy()
     }
 
     private fun init() {
@@ -139,15 +141,21 @@ class MainActivity : AppCompatActivity() {
             watchingNowRecyclerView.adapter = adapterWatchingNow
 
             Thread {
-
-                val categoryFilms = String()
-                val filmsList = givRateFilmsTMDB.getRateFilms(categoryFilms)
-
+                val categoryFilms = listOf<FilmsListWatchingNow>()
+                val filmsList = givRateFilmsTMDB.getRateFilms(categoryFilms,
+                    onError = {
+                        Snackbar.make(
+                            mySnackbarLayot,
+                            "ссылка не существует либо нет подлючения к интернету ${it.message}",
+                            Snackbar.LENGTH_INDEFINITE
+                        )
+                            .setDuration(10000)
+                            .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
+                            .show()
+                    })
                 runOnUiThread {
                     adapterWatchingNow.addAllFilmsWatchingNow(filmsList)
                 }
-                filmsError.loadFilmsError()//выводит закусочную всегда
-
             }.start()
         }
     }
@@ -159,7 +167,7 @@ class MainActivity : AppCompatActivity() {
             R.id.menu_info ->
                 Toast.makeText(
                     applicationContext, "not realize",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()
         }
         return super.onOptionsItemSelected(item)

@@ -1,4 +1,4 @@
-package com.kotlinmovie.movies.data
+package com.kotlinmovie.movies.domain
 
 data class FilmsListRecommendation(
     val imageId: Int,
