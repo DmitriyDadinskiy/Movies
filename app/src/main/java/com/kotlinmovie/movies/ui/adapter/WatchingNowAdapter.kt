@@ -35,7 +35,7 @@ class WatchingNowAdapter :
 
         init {
             filmItemImage.setOnClickListener {
-                onClickListenerWatchingNowImage?.onClick(adapterPosition)
+                onClickListenerWatchingNowImage?.onClickImage(adapterPosition)
             }
             filmWatchingNowFavorites.setOnClickListener {
                 onClickListenerWatchingNowImage?.onClickFavorites(adapterPosition)
@@ -69,10 +69,11 @@ class WatchingNowAdapter :
     }
 
     interface CLickOnWatchingNowImage {
-        fun onClick(imageId: Int)
+        fun onClickImage(imageId: Int)
         fun onClickFavorites(favoritesID: Int)
 
     }
+
 
 }
 
