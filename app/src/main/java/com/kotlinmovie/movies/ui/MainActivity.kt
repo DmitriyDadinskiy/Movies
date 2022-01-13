@@ -1,6 +1,7 @@
 package com.kotlinmovie.movies.ui
 
 
+import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Bundle
@@ -17,6 +18,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.kotlinmovie.movies.R
 import com.kotlinmovie.movies.app
 import com.kotlinmovie.movies.data.ConnectivityManagerCheckInternet
+import com.kotlinmovie.movies.data.MAIN_SERVICE_GET_EVENT
+import com.kotlinmovie.movies.data.MyIntentServiceLog
 import com.kotlinmovie.movies.databinding.ActivityMainBinding
 import com.kotlinmovie.movies.domain.CLickOnRecommendationImage
 import com.kotlinmovie.movies.domain.FilmsListRecommendation
@@ -39,14 +42,14 @@ class MainActivity : AppCompatActivity() {
     private val receiver = ConnectivityManagerCheckInternet()
     private val givRateFilmsTMDB: GivRateFilmsRepoTMDB by lazy { app.givRateFilmsRepoTMDB }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         registerReceiver(
             receiver,
-            IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-        )//подписка на широковещательные сообщения
+            IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))//подписка на широковещательные сообщения
 
         init()
 
@@ -72,12 +75,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun startCardFilmFragment() {
         val intent = intent
+        val intentServiceLog = Intent(this, MyIntentServiceLog::class.java)
         adapterRecommendation.setClickOnRecommendationImage(object : CLickOnRecommendationImage {
-            override fun onClick(imageId: Int) {
+            override fun onClickImages(imageId: Int) {
                 intent.setClass(this@MainActivity, ActivityStartFilmsCard::class.java)
                 intent.putExtra(CardFilmsFragment.imagefilm, imageId)
                 startActivity(intent)
-
+                startService(intentServiceLog.putExtra(MAIN_SERVICE_GET_EVENT,
+                    "открыта карточка фильма $imageId"))
                 Toast.makeText(applicationContext, "Рекомендации", Toast.LENGTH_LONG).show()
             }
 
@@ -90,15 +95,18 @@ class MainActivity : AppCompatActivity() {
                     .setDuration(10000)
                     .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_FADE)
                     .show()
+                startService(intentServiceLog.putExtra(MAIN_SERVICE_GET_EVENT,
+                    "фильм $favoritesID добавлен в избранное"))
             }
 
         })
         adapterWatchingNow.setClickWatchingNow(object : WatchingNowAdapter.CLickOnWatchingNowImage {
-            override fun onClick(imageId: Int) {
+            override fun onClickImage(imageId: Int) {
                 intent.setClass(this@MainActivity, ActivityStartFilmsCard::class.java)
                 intent.putExtra(CardFilmsFragment.imagefilm, imageId)
                 startActivity(intent)
-
+                startService(intentServiceLog.putExtra(MAIN_SERVICE_GET_EVENT,
+                    "открыта карточка фильма $imageId"))
                 Toast.makeText(applicationContext, "Смотрят сейчас", Toast.LENGTH_LONG).show()
             }
 
@@ -110,6 +118,8 @@ class MainActivity : AppCompatActivity() {
                 )
                     .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
                     .show()
+                startService(intentServiceLog.putExtra(MAIN_SERVICE_GET_EVENT,
+                    "фильм $favoritesID добавлен в избранное"))
             }
 
         })
@@ -152,17 +162,18 @@ class MainActivity : AppCompatActivity() {
                             .setDuration(10000)
                             .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
                             .show()
+
                     })
                 runOnUiThread {
                     adapterWatchingNow.addAllFilmsWatchingNow(filmsList)
                 }
             }.start()
         }
+
     }
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
         when (item.itemId) {
             R.id.menu_info ->
                 Toast.makeText(
