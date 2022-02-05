@@ -8,32 +8,43 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.kotlinmovie.movies.R
 import com.kotlinmovie.movies.databinding.ItemRecommendationBinding
-import com.kotlinmovie.movies.domain.CLickOnRecommendationImage
 import com.kotlinmovie.movies.domain.FilmsListRecommendation
+import com.kotlinmovie.movies.ui.IMAGES_PATH
+import com.squareup.picasso.Picasso
 
 
-class RecommendationAdapter : RecyclerView.Adapter<RecommendationAdapter.RecommendationHolder>(){
-    private val recommendationAdapterList = ArrayList<FilmsListRecommendation>()
-    private var onClickListener: CLickOnRecommendationImage? = null
+class RecommendationAdapter(
+    private var recommendationAdapterList: List<FilmsListRecommendation>,
+    private val onMovieClickRecommendation: (filmsListRecommendation: FilmsListRecommendation) -> Unit
+) :
+    RecyclerView.Adapter<RecommendationAdapter.RecommendationHolder>() {
 
-     inner class RecommendationHolder(item: View): RecyclerView.ViewHolder(item) {
-        private val filmItemImageRecommendation: ImageView = itemView.findViewById(R.id.film_recommendation_item_image
+    private var onClickListener: ClickOnRecommendationImage? = null
+
+    inner class RecommendationHolder(item: View) : RecyclerView.ViewHolder(item) {
+        private val filmItemImageRecommendation: ImageView = itemView.findViewById(
+            R.id.film_recommendation_item_image
         )
         private val binding = ItemRecommendationBinding.bind(item)
-         private val filmRecommendationFavorites: ImageButton = binding.filmRecommendationCardFavoritesImageButton
+        private val filmRecommendationFavorites: ImageButton =
+            binding.filmRecommendationCardFavoritesImageButton
 
-        fun bind(recommendation: FilmsListRecommendation) = with(binding){
-           filmRecommendationItemImage.setImageResource(recommendation.imageId)
-            filmRecommendationNameItemTextView.text = recommendation.filmName
-            yearRecommendationFilmTextView.text = recommendation.filmYear
-            ratingRecommendationTextView.text = recommendation.rating
+        fun bind(recommendation: FilmsListRecommendation) = with(binding) {
+
+            Picasso.get().load(IMAGES_PATH + recommendation.posterPath)
+                .into(this@RecommendationHolder.filmItemImageRecommendation)
+
+            filmRecommendationNameItemTextView.text = recommendation.title
+            yearRecommendationFilmTextView.text = recommendation.releaseDate
+            ratingRecommendationTextView.text = recommendation.voteAverage.toString()
+
+            filmItemImageRecommendation.setOnClickListener {
+                onMovieClickRecommendation.invoke(recommendation)
+            }
         }
 
         init {
-            filmItemImageRecommendation.setOnClickListener{
-                onClickListener?.onClick(adapterPosition)
-            }
-            filmRecommendationFavorites.setOnClickListener{
+            filmRecommendationFavorites.setOnClickListener {
                 onClickListener?.onClickImageButton(adapterPosition)
             }
         }
@@ -54,15 +65,22 @@ class RecommendationAdapter : RecyclerView.Adapter<RecommendationAdapter.Recomme
     override fun getItemCount(): Int {
         return recommendationAdapterList.size
     }
-    fun setClickOnRecommendationImage (onClickListener: CLickOnRecommendationImage) {
+
+    fun setClickOnRecommendationImage(onClickListener: ClickOnRecommendationImage) {
         this.onClickListener = onClickListener
 
     }
 
-    fun addAllFilmsRecommendation(recommendation: FilmsListRecommendation){
-        recommendationAdapterList.addAll(listOf(recommendation))
+    fun addAllFilmsRecommendation(recommendation: List<FilmsListRecommendation>) {
+        this.recommendationAdapterList = recommendation
         notifyDataSetChanged()
+    }
+
+    interface ClickOnRecommendationImage {
+        fun onClickImageButton(favoritesID: Int)
+
     }
 
 
 }
+

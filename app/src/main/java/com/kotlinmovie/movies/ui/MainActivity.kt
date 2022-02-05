@@ -18,41 +18,37 @@ import com.google.android.material.snackbar.Snackbar
 import com.kotlinmovie.movies.R
 import com.kotlinmovie.movies.app
 import com.kotlinmovie.movies.data.ConnectivityManagerCheckInternet
-import com.kotlinmovie.movies.data.MAIN_SERVICE_GET_EVENT
-import com.kotlinmovie.movies.data.MyIntentServiceLog
 import com.kotlinmovie.movies.databinding.ActivityMainBinding
-import com.kotlinmovie.movies.domain.CLickOnRecommendationImage
-import com.kotlinmovie.movies.domain.FilmsListRecommendation
-import com.kotlinmovie.movies.domain.FilmsListWatchingNow
-import com.kotlinmovie.movies.domain.GivRateFilmsRepoTMDB
+import com.kotlinmovie.movies.domain.*
+import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.OVERVIEW
+import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.POSTER_PATCH
+import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.RELEASE_DATE
+import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.TITLE
+import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.VOTE_AVERAGE
 import com.kotlinmovie.movies.ui.adapter.RecommendationAdapter
+
 import com.kotlinmovie.movies.ui.adapter.WatchingNowAdapter
 
+const val IMAGES_PATH = "https://image.tmdb.org/t/p/w500"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val adapterWatchingNow = WatchingNowAdapter()
-    private val adapterRecommendation = RecommendationAdapter()
-    private lateinit var mySnackbarLayot: CoordinatorLayout
-    private val imageFilmsRecommendation = listOf(
-        R.drawable.joker,
-        R.drawable.joker1,
-        R.drawable.joker2,
-    )
+
+    private lateinit var adapterWatchingNow: WatchingNowAdapter
+    private lateinit var adapterRecommendation: RecommendationAdapter
+    private lateinit var mySnackbarLayout: CoordinatorLayout
+
     private val receiver = ConnectivityManagerCheckInternet()
     private val givRateFilmsTMDB: GivRateFilmsRepoTMDB by lazy { app.givRateFilmsRepoTMDB }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        registerReceiver(
-            receiver,
-            IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))//подписка на широковещательные сообщения
-
+        registerReceiver(receiver,
+            IntentFilter(ConnectivityManager
+                .CONNECTIVITY_ACTION))//подписка на широковещательные сообщения
         init()
-
     }
 
     override fun onDestroy() {
@@ -70,56 +66,84 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun initButton() {
-        mySnackbarLayot = binding.snackbarLayout
+        mySnackbarLayout = binding.snackbarLayout
     }
 
-    private fun startCardFilmFragment() {
+    private fun startCardFilmsWatchingNow(filmsListWatchingNow: FilmsListWatchingNow) {
         val intent = intent
         val intentServiceLog = Intent(this, MyIntentServiceLog::class.java)
-        adapterRecommendation.setClickOnRecommendationImage(object : CLickOnRecommendationImage {
-            override fun onClickImages(imageId: Int) {
-                intent.setClass(this@MainActivity, ActivityStartFilmsCard::class.java)
-                intent.putExtra(CardFilmsFragment.imagefilm, imageId)
-                startActivity(intent)
-                startService(intentServiceLog.putExtra(MAIN_SERVICE_GET_EVENT,
-                    "открыта карточка фильма $imageId"))
-                Toast.makeText(applicationContext, "Рекомендации", Toast.LENGTH_LONG).show()
-            }
+        intent.setClass(this@MainActivity, ActivityStartFilmsCard::class.java)
+        intent.putExtra(POSTER_PATCH, filmsListWatchingNow.posterPath)
+        intent.putExtra(TITLE, filmsListWatchingNow.title)
+        intent.putExtra(VOTE_AVERAGE, filmsListWatchingNow.voteAverage)
+        intent.putExtra(RELEASE_DATE, filmsListWatchingNow.releaseDate)
+        intent.putExtra(OVERVIEW, filmsListWatchingNow.overview)
+        startActivity(intent)
+        startService(
+            intentServiceLog.putExtra(MAIN_SERVICE_GET_EVENT,
+                "открыта карточка фильма ID ${filmsListWatchingNow.id} " +
+                        "${filmsListWatchingNow.title}"
+            )
+        )
+        Toast.makeText(applicationContext, "${filmsListWatchingNow.title}",
+            Toast.LENGTH_SHORT).show()
+    }
 
+    private fun startCardFilmsRecommendation(filmsListRecommendation: FilmsListRecommendation) {
+        val intentServiceLog = Intent(this, MyIntentServiceLog::class.java)
+        startService(
+            intentServiceLog.putExtra(MAIN_SERVICE_GET_EVENT,
+                "открыта карточка фильма  ${filmsListRecommendation.title}"))
+        intent.setClass(this@MainActivity, ActivityStartFilmsCard::class.java)
+        intent.putExtra(POSTER_PATCH, filmsListRecommendation.posterPath)
+        intent.putExtra(TITLE, filmsListRecommendation.title)
+        intent.putExtra(VOTE_AVERAGE, filmsListRecommendation.voteAverage)
+        intent.putExtra(RELEASE_DATE, filmsListRecommendation.releaseDate)
+        intent.putExtra(OVERVIEW, filmsListRecommendation.overview)
+        startActivity(intent)
+
+        Toast.makeText(applicationContext, "${filmsListRecommendation.title}",
+            Toast.LENGTH_SHORT).show()
+    }
+
+
+    private fun startCardFilmFragment() {
+        val intentServiceLog = Intent(this, MyIntentServiceLog::class.java)
+        adapterRecommendation.setClickOnRecommendationImage(object :
+            RecommendationAdapter.ClickOnRecommendationImage {
             override fun onClickImageButton(favoritesID: Int) {
                 Snackbar.make(
-                    mySnackbarLayot,
+                    mySnackbarLayout,
                     resources.getString(R.string.button_favorites),
                     Snackbar.LENGTH_INDEFINITE
                 )
                     .setDuration(10000)
                     .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_FADE)
                     .show()
-                startService(intentServiceLog.putExtra(MAIN_SERVICE_GET_EVENT,
-                    "фильм $favoritesID добавлен в избранное"))
+                startService(
+                    intentServiceLog.putExtra(
+                        MAIN_SERVICE_GET_EVENT,
+                        "фильм $favoritesID добавлен в избранное"
+                    )
+                )
             }
-
         })
-        adapterWatchingNow.setClickWatchingNow(object : WatchingNowAdapter.CLickOnWatchingNowImage {
-            override fun onClickImage(imageId: Int) {
-                intent.setClass(this@MainActivity, ActivityStartFilmsCard::class.java)
-                intent.putExtra(CardFilmsFragment.imagefilm, imageId)
-                startActivity(intent)
-                startService(intentServiceLog.putExtra(MAIN_SERVICE_GET_EVENT,
-                    "открыта карточка фильма $imageId"))
-                Toast.makeText(applicationContext, "Смотрят сейчас", Toast.LENGTH_LONG).show()
-            }
 
+        adapterWatchingNow.setClickWatchingNow(object : WatchingNowAdapter.CLickOnWatchingNowImage {
             override fun onClickFavorites(favoritesID: Int) {
                 Snackbar.make(
-                    mySnackbarLayot,
+                    mySnackbarLayout,
                     resources.getString(R.string.button_favorites),
                     Snackbar.LENGTH_LONG
                 )
                     .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
                     .show()
-                startService(intentServiceLog.putExtra(MAIN_SERVICE_GET_EVENT,
-                    "фильм $favoritesID добавлен в избранное"))
+                startService(
+                    intentServiceLog.putExtra(
+                        MAIN_SERVICE_GET_EVENT,
+                        "фильм добавлен в избранное"
+                    )
+                )
             }
 
         })
@@ -130,15 +154,24 @@ class MainActivity : AppCompatActivity() {
             recommendationRecyclerView.layoutManager = LinearLayoutManager(
                 this@MainActivity, LinearLayoutManager.HORIZONTAL, false
             )
+
+            adapterRecommendation = RecommendationAdapter(listOf())
+            { filmsListRecommendation -> startCardFilmsRecommendation(filmsListRecommendation) }
             recommendationRecyclerView.adapter = adapterRecommendation
-            for (index in imageFilmsRecommendation.indices) {
-                val recommendation = FilmsListRecommendation(
-                    imageFilmsRecommendation[index],
-                    "Joker $index", "2020", "8.8"
-                )
-                adapterRecommendation.addAllFilmsRecommendation(recommendation)
+
+            givRateFilmsTMDB.getTopRatedFilms(
+                onSuccess = ::gotListMoviesTopRated,
+            ) {
+                Toast.makeText(
+                    applicationContext, "нет подключения к ${it.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
+    }
+
+    private fun gotListMoviesTopRated(result: List<FilmsListRecommendation>) {
+        adapterRecommendation.addAllFilmsRecommendation(result)
     }
 
     private fun initViewWatchingNow() {
@@ -148,30 +181,29 @@ class MainActivity : AppCompatActivity() {
                 this@MainActivity,
                 LinearLayoutManager.HORIZONTAL, false
             )
+
+            adapterWatchingNow = WatchingNowAdapter(listOf())
+            { filmsListWatchingNow -> startCardFilmsWatchingNow(filmsListWatchingNow) }
             watchingNowRecyclerView.adapter = adapterWatchingNow
 
-            Thread {
-                val categoryFilms = listOf<FilmsListWatchingNow>()
-                val filmsList = givRateFilmsTMDB.getRateFilms(categoryFilms,
-                    onError = {
-                        Snackbar.make(
-                            mySnackbarLayot,
-                            "ссылка не существует либо нет подлючения к интернету ${it.message}",
-                            Snackbar.LENGTH_INDEFINITE
-                        )
-                            .setDuration(10000)
-                            .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
-                            .show()
-
-                    })
-                runOnUiThread {
-                    adapterWatchingNow.addAllFilmsWatchingNow(filmsList)
-                }
-            }.start()
+            givRateFilmsTMDB.getPopularFilms(
+                onSuccess = ::gotListMoviesPopular,
+            ) {
+                Snackbar.make(mySnackbarLayout,
+                    "ссылка не существует либо нет подлючения к интернету ${it.message}",
+                    Snackbar.LENGTH_INDEFINITE
+                )
+                    .setDuration(10000)
+                    .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE)
+                    .show()
+            }
         }
 
     }
 
+    private fun gotListMoviesPopular(result: List<FilmsListWatchingNow>) {
+        adapterWatchingNow.addAllFilmsWatchingNow(result)
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {

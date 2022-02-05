@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="header_size">28dp</dimen>
-    <dimen name="films_name">24dp</dimen>
+    <dimen name="films_name">16dp</dimen>
     <dimen name="film_card_name_textView_size">18dp</dimen>
 </resources>

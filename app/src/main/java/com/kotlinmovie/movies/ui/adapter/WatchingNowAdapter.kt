@@ -9,36 +9,41 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kotlinmovie.movies.R
 import com.kotlinmovie.movies.databinding.ItemWatchingNowBinding
 import com.kotlinmovie.movies.domain.FilmsListWatchingNow
+import com.kotlinmovie.movies.ui.IMAGES_PATH
+import com.squareup.picasso.Picasso
 
 
-class WatchingNowAdapter :
+class WatchingNowAdapter(
+    private var watchingNowAdapterList: List<FilmsListWatchingNow>,
+    private val onMovieClick: (filmsListWatchingNow: FilmsListWatchingNow) -> Unit
+) :
     RecyclerView.Adapter<WatchingNowAdapter.WatchingHolder>() {
-    private val watchingNowAdapterList = ArrayList<FilmsListWatchingNow>()
-    private var onClickListenerWatchingNowImage: CLickOnWatchingNowImage? = null
+
+    private var onClickListenerWatchingNowImageButton: CLickOnWatchingNowImage? = null
 
 
     inner class WatchingHolder(item: View) : RecyclerView.ViewHolder(item) {
-        private val filmItemImage: ImageView = itemView.findViewById(R.id.film_item_image)
+        private val filmItemImageView: ImageView = itemView.findViewById(R.id.film_item_imageView)
         private val filmWatchingNowFavorites: ImageButton =
             itemView.findViewById(R.id.film_card_favorites_imageButton)
         private val binding = ItemWatchingNowBinding.bind(item)
 
         fun bind(filmsListWatchingNow: FilmsListWatchingNow) = with(binding) {
-            filmItemImage.setImageResource(R.drawable.joker)
-            filmItemImage.setImageResource(R.drawable.joker1)
-            filmItemImage.setImageResource(R.drawable.joker2)
+
+            Picasso.get().load(IMAGES_PATH + filmsListWatchingNow.posterPath)
+                .into(this@WatchingHolder.filmItemImageView)
+
             filmNameItemTextView.text = filmsListWatchingNow.title
-            yearFilmTextView.text = filmsListWatchingNow.release_date
-            ratingTextView.text = filmsListWatchingNow.vote_average.toString()
+            yearFilmTextView.text = filmsListWatchingNow.releaseDate
+            ratingTextView.text = filmsListWatchingNow.voteAverage.toString()
+
+            filmItemImageView.setOnClickListener { onMovieClick.invoke(filmsListWatchingNow) }
         }
 
 
         init {
-            filmItemImage.setOnClickListener {
-                onClickListenerWatchingNowImage?.onClickImage(adapterPosition)
-            }
             filmWatchingNowFavorites.setOnClickListener {
-                onClickListenerWatchingNowImage?.onClickFavorites(adapterPosition)
+                onClickListenerWatchingNowImageButton?.onClickFavorites(adapterPosition)
             }
         }
     }
@@ -57,25 +62,28 @@ class WatchingNowAdapter :
         return watchingNowAdapterList.size
     }
 
-    fun addAllFilmsWatchingNow(filmsListWatchingNow: MutableList<FilmsListWatchingNow>) {
-        watchingNowAdapterList.addAll(filmsListWatchingNow)
+    fun addAllFilmsWatchingNow(watchingNowAdapterList: List<FilmsListWatchingNow>) {
+        this.watchingNowAdapterList = watchingNowAdapterList
         notifyDataSetChanged()
     }
 
 
     fun setClickWatchingNow(onClickListenerWatchingNowImage: CLickOnWatchingNowImage) {
-        this.onClickListenerWatchingNowImage = onClickListenerWatchingNowImage
+        this.onClickListenerWatchingNowImageButton = onClickListenerWatchingNowImage
 
     }
 
+
     interface CLickOnWatchingNowImage {
-        fun onClickImage(imageId: Int)
         fun onClickFavorites(favoritesID: Int)
 
     }
 
 
 }
+
+
+
 
 
 
