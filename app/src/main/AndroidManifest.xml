@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Movies">
         <service
-            android:name=".data.MyIntentServiceLog"
+            android:name=".domain.MyIntentServiceLog"
             android:exported="false"></service>
 
         <receiver

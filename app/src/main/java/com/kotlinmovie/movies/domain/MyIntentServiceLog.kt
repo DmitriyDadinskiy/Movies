@@ -1,4 +1,4 @@
-package com.kotlinmovie.movies.data
+package com.kotlinmovie.movies.domain
 
 import android.app.IntentService
 import android.content.Intent

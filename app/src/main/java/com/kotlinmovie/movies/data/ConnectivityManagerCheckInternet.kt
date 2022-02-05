@@ -18,7 +18,7 @@ class ConnectivityManagerCheckInternet : BroadcastReceiver() {
 
         if (ConnectivityManager.CONNECTIVITY_ACTION == intent.action) {
             Toast.makeText(context,
-                    "internet connection has changed", Toast.LENGTH_LONG).show()
+                    "internet connection has changed", Toast.LENGTH_SHORT).show()
         }
     }
 }
