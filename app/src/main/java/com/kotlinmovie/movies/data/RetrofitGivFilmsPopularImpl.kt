@@ -4,8 +4,9 @@ import com.kotlinmovie.movies.data.retrofit.TMDBRepoApi
 import com.kotlinmovie.movies.domain.*
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Query
 
-private const val BASE_URL = "https://api.themoviedb.org/"
+private const val BASE_URL = "https://api.themoviedb.org/3/"
 
 class RetrofitGivFilmsPopularImpl : GivRateFilmsRepoTMDB {
     private val retrofit = Retrofit.Builder()
@@ -68,4 +69,34 @@ class RetrofitGivFilmsPopularImpl : GivRateFilmsRepoTMDB {
 
         })
     }
+
+    override fun getSearchMoves(
+        page: Int,
+        query: String,
+        includeAdult: Boolean,
+        onSuccess: (MutableList<FilmListSearch>) -> Unit,
+        onError: (Throwable) -> Unit
+    ) {
+        service.loadReposSearchFilms(page = page, query = query, includeAdult = includeAdult)
+            .enqueue(object : Callback<SearchResult>{
+            override fun onResponse(call: Call<SearchResult>,
+                                    response: Response<SearchResult>) {
+                if(response.isSuccessful){
+                    val responseBody = response.body()
+                    if (responseBody != null){
+                        onSuccess.invoke(responseBody.results)
+                    }else{
+                        onError.invoke(Throwable())
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<SearchResult>, t: Throwable) {
+                onError.invoke(Throwable())
+            }
+
+        })
+    }
+
+
 }

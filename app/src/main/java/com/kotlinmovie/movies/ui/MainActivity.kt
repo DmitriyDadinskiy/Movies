@@ -4,12 +4,15 @@ package com.kotlinmovie.movies.ui
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,6 +23,7 @@ import com.kotlinmovie.movies.app
 import com.kotlinmovie.movies.data.ConnectivityManagerCheckInternet
 import com.kotlinmovie.movies.databinding.ActivityMainBinding
 import com.kotlinmovie.movies.domain.*
+import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.ID
 import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.OVERVIEW
 import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.POSTER_PATCH
 import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.RELEASE_DATE
@@ -29,7 +33,8 @@ import com.kotlinmovie.movies.ui.adapter.RecommendationAdapter
 
 import com.kotlinmovie.movies.ui.adapter.WatchingNowAdapter
 
-const val IMAGES_PATH = "https://image.tmdb.org/t/p/w500"
+const val IMAGES_PATH = "https://image.tmdb.org/t/p/w342"
+const val API_KEY = "feec2f259352fcecc420544fb3ba88de"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -41,6 +46,8 @@ class MainActivity : AppCompatActivity() {
     private val receiver = ConnectivityManagerCheckInternet()
     private val givRateFilmsTMDB: GivRateFilmsRepoTMDB by lazy { app.givRateFilmsRepoTMDB }
 
+    private val dataModel: DataModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -48,6 +55,7 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(receiver,
             IntentFilter(ConnectivityManager
                 .CONNECTIVITY_ACTION))//подписка на широковещательные сообщения
+
         init()
     }
 
@@ -70,15 +78,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startCardFilmsWatchingNow(filmsListWatchingNow: FilmsListWatchingNow) {
-        val intent = intent
+
+        startActivity(Intent(this@MainActivity, ActivityStartFilmsCard::class.java)
+            .apply {
+                putExtra(POSTER_PATCH, filmsListWatchingNow.posterPath)
+                putExtra(TITLE, filmsListWatchingNow.title)
+                putExtra(VOTE_AVERAGE, filmsListWatchingNow.voteAverage)
+                putExtra(RELEASE_DATE, filmsListWatchingNow.releaseDate)
+                putExtra(OVERVIEW, filmsListWatchingNow.overview)
+                putExtra(ID, filmsListWatchingNow.id)
+            })
+
         val intentServiceLog = Intent(this, MyIntentServiceLog::class.java)
-        intent.setClass(this@MainActivity, ActivityStartFilmsCard::class.java)
-        intent.putExtra(POSTER_PATCH, filmsListWatchingNow.posterPath)
-        intent.putExtra(TITLE, filmsListWatchingNow.title)
-        intent.putExtra(VOTE_AVERAGE, filmsListWatchingNow.voteAverage)
-        intent.putExtra(RELEASE_DATE, filmsListWatchingNow.releaseDate)
-        intent.putExtra(OVERVIEW, filmsListWatchingNow.overview)
-        startActivity(intent)
         startService(
             intentServiceLog.putExtra(MAIN_SERVICE_GET_EVENT,
                 "открыта карточка фильма ID ${filmsListWatchingNow.id} " +
@@ -90,18 +101,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startCardFilmsRecommendation(filmsListRecommendation: FilmsListRecommendation) {
+
+        startActivity(Intent(this@MainActivity, ActivityStartFilmsCard::class.java)
+            .apply {
+                putExtra(POSTER_PATCH, filmsListRecommendation.posterPath)
+                putExtra(TITLE, filmsListRecommendation.title)
+                putExtra(VOTE_AVERAGE, filmsListRecommendation.voteAverage)
+                putExtra(RELEASE_DATE, filmsListRecommendation.releaseDate)
+                putExtra(OVERVIEW, filmsListRecommendation.overview)
+            })
+
         val intentServiceLog = Intent(this, MyIntentServiceLog::class.java)
         startService(
             intentServiceLog.putExtra(MAIN_SERVICE_GET_EVENT,
                 "открыта карточка фильма  ${filmsListRecommendation.title}"))
-        intent.setClass(this@MainActivity, ActivityStartFilmsCard::class.java)
-        intent.putExtra(POSTER_PATCH, filmsListRecommendation.posterPath)
-        intent.putExtra(TITLE, filmsListRecommendation.title)
-        intent.putExtra(VOTE_AVERAGE, filmsListRecommendation.voteAverage)
-        intent.putExtra(RELEASE_DATE, filmsListRecommendation.releaseDate)
-        intent.putExtra(OVERVIEW, filmsListRecommendation.overview)
-        startActivity(intent)
-
         Toast.makeText(applicationContext, "${filmsListRecommendation.title}",
             Toast.LENGTH_SHORT).show()
     }
@@ -208,36 +221,51 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_info ->
-                Toast.makeText(
-                    applicationContext, "not realize",
+                Toast.makeText(applicationContext, "not realize",
                     Toast.LENGTH_SHORT
                 ).show()
+
+            R.id.menu_settings ->
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, SettingsFragment())
+                    .commit()
+
         }
         return super.onOptionsItemSelected(item)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
-        val search = menu.findItem(R.id.menu_search)
-        val searchText = search.actionView
-        searchText.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                Toast.makeText(this@MainActivity, query, Toast.LENGTH_LONG).show()
-                return true
+        val searchView = menu.findItem(R.id.menu_search).actionView as SearchView
+
+        searchView.setOnQueryTextListener(object  : SearchView.OnQueryTextListener{
+            @RequiresApi(Build.VERSION_CODES.N)
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                Log.d(TAG, "onQueryTextSubmit: $query")
+                dismissKeyboardShortcutsHelper()
+                return false
             }
 
-            override fun onQueryTextChange(newText: String): Boolean {
-                return true
+            override fun onQueryTextChange(newText: String?): Boolean {
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.design_bottom_sheet, SearchDialogFragment())
+                    .commit()
+                dataModel.sendingSearchRequest.value = newText
+                Log.d(TAG, "onQueryTextChange: $newText")
+
+                return false
+
             }
+
         })
+
         return super.onCreateOptionsMenu(menu)
+
     }
-
-
 }
 
-private fun View.setOnQueryTextListener(onQueryTextListener: SearchView.OnQueryTextListener) {
 
-}
 
 

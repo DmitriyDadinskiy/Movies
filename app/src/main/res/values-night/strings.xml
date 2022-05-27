@@ -9,4 +9,5 @@
     <string name="films_card_budget">Бюджет:</string>
     <string name="film_card_feel">Сборы:</string>
     <string name="film_card_release_date">Дата релиза</string>
+    <string name="fragment_settings_adult_switch">Включить взрослый контент</string>
 </resources>

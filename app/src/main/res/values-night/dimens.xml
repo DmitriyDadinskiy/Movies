@@ -3,4 +3,5 @@
     <dimen name="header_size">28dp</dimen>
     <dimen name="films_name">24dp</dimen>
     <dimen name="film_card_name_textView_size">18dp</dimen>
+    <dimen name="fragment_settings_text_size">26sp</dimen>
 </resources>

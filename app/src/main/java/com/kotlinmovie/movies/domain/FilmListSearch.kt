@@ -2,8 +2,8 @@ package com.kotlinmovie.movies.domain
 
 import com.google.gson.annotations.SerializedName
 
+data class FilmListSearch(
 
-data class FilmsListWatchingNow(
     @SerializedName("title")
     val title: String, // название ФИЛЬМА
     @SerializedName("vote_average")
@@ -16,9 +16,7 @@ data class FilmsListWatchingNow(
     val id: Int, // ИД фильма
 )
 
-data class MovieResult(
-    val results: List<FilmsListWatchingNow>
+data class SearchResult(
+    val results: MutableList<FilmListSearch>
 )
-
-
 

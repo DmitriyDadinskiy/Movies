@@ -21,4 +21,13 @@ interface GivRateFilmsRepoTMDB {
     ) {
 
     }
+    @WorkerThread
+    @Throws(Throwable::class)
+    fun getSearchMoves(
+        page: Int,
+        query: String,
+        includeAdult: Boolean,
+        onSuccess: (MutableList<FilmListSearch>) -> Unit,
+        onError: (Throwable) -> Unit,)
+
 }
