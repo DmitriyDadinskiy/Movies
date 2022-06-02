@@ -1,6 +1,5 @@
 package com.kotlinmovie.movies.ui
 
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -10,13 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.kotlinmovie.movies.R
 import com.kotlinmovie.movies.data.RetrofitGivFilmsPopularImpl
 import com.kotlinmovie.movies.domain.DataModel
@@ -26,7 +23,7 @@ import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.TITLE
 import com.kotlinmovie.movies.ui.adapter.SearchFilmAdapter
 
 
-class SearchDialogFragment : BottomSheetDialogFragment() {
+class SearchDialogFragment : Fragment() {
 
     private val givRateFilmsTMDB: GivRateFilmsRepoTMDB = RetrofitGivFilmsPopularImpl()
     private var mContext: Context? = null
@@ -37,15 +34,12 @@ class SearchDialogFragment : BottomSheetDialogFragment() {
     private var searchQuery = ""
 
     private lateinit var closeButton: ImageButton
-
+    companion object {
+        fun newInstance() = SearchDialogFragment()
+    }
 
     private val dataModel: DataModel by activityViewModels()
 
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return BottomSheetDialog(this.requireContext())
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

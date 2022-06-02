@@ -250,7 +250,8 @@ class MainActivity : AppCompatActivity() {
             override fun onQueryTextChange(newText: String?): Boolean {
                 supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.design_bottom_sheet, SearchDialogFragment())
+                    .replace(R.id.design_bottom_sheet, SearchDialogFragment.newInstance())
+                    .addToBackStack("")
                     .commit()
                 dataModel.sendingSearchRequest.value = newText
                 Log.d(TAG, "onQueryTextChange: $newText")
