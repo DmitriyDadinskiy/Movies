@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kotlinmovie.movies.R
 import com.kotlinmovie.movies.data.RetrofitGivFilmsPopularImpl
+import com.kotlinmovie.movies.databinding.FragmentSearchDialogBinding
 import com.kotlinmovie.movies.domain.DataModel
 import com.kotlinmovie.movies.domain.FilmListSearch
 import com.kotlinmovie.movies.domain.GivRateFilmsRepoTMDB
@@ -25,6 +27,10 @@ import com.kotlinmovie.movies.ui.adapter.SearchFilmAdapter
 
 class SearchDialogFragment : Fragment() {
 
+    private var _binding: FragmentSearchDialogBinding? = null
+    private val binding: FragmentSearchDialogBinding
+        get() = _binding!!
+
     private val givRateFilmsTMDB: GivRateFilmsRepoTMDB = RetrofitGivFilmsPopularImpl()
     private var mContext: Context? = null
     private lateinit var adapterSearchFilm: SearchFilmAdapter
@@ -33,7 +39,6 @@ class SearchDialogFragment : Fragment() {
     private var searchMoviesIncludeAdult: Boolean = true
     private var searchQuery = ""
 
-    private lateinit var closeButton: ImageButton
     companion object {
         fun newInstance() = SearchDialogFragment()
     }
@@ -46,11 +51,8 @@ class SearchDialogFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         mContext = context
-
-        val view = inflater.inflate(R.layout.fragment_search_dialog, container, false
-        )
-
-        return view
+        _binding = FragmentSearchDialogBinding.inflate(inflater,container,false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -68,11 +70,12 @@ class SearchDialogFragment : Fragment() {
     private fun init() {
         initRecyclerViewSearch()
         initButton()
+
     }
 
     private fun initButton() {
-        closeButton = view?.findViewById(R.id.close_imageButton2)!!
-        closeButton.setOnClickListener {
+        binding.searchFilmProgressBar.visibility = View.VISIBLE
+        binding.closeImageButton.setOnClickListener {
             this.requireActivity().supportFragmentManager
                 .beginTransaction()
                 .remove(this)
@@ -126,7 +129,11 @@ class SearchDialogFragment : Fragment() {
         ).show()
     }
     private fun gotListMoviesSearch(result: MutableList<FilmListSearch>){
+        binding.searchFilmProgressBar.visibility = View.INVISIBLE
         adapterSearchFilm.addMoveSearch(result)
     }
-
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 }

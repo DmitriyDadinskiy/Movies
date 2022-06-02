@@ -1,11 +1,13 @@
 package com.kotlinmovie.movies.ui
 
 
+import android.app.SearchManager
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.SearchRecentSuggestions
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -237,12 +239,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
+        val searchManager = getSystemService(SEARCH_SERVICE) as SearchManager
         val searchView = menu.findItem(R.id.menu_search).actionView as SearchView
+        val searchInfo = searchManager.getSearchableInfo(componentName)
+        searchView.setSearchableInfo(searchInfo)
 
         searchView.setOnQueryTextListener(object  : SearchView.OnQueryTextListener{
             @RequiresApi(Build.VERSION_CODES.N)
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                Log.d(TAG, "onQueryTextSubmit: $query")
+            override fun onQueryTextSubmit(newText: String?): Boolean {
+
                 dismissKeyboardShortcutsHelper()
                 return false
             }
@@ -255,7 +260,6 @@ class MainActivity : AppCompatActivity() {
                     .commit()
                 dataModel.sendingSearchRequest.value = newText
                 Log.d(TAG, "onQueryTextChange: $newText")
-
                 return false
 
             }
