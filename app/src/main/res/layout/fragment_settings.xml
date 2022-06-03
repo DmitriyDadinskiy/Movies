@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E7D6EA"
+    android:orientation="vertical"
+    tools:context=".ui.SettingsFragment">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/fragment_settings_color_sittings"
+        android:gravity="center"
+        android:text="@string/hello_blank_fragment"
+        android:textSize="@dimen/fragment_settings_text_size" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/adult_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/fragment_settings_adult_switch" />
+
+    <ImageButton
+        android:id="@+id/close_setting_imageButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_menu_close_clear_cancel" />
+
+
+</LinearLayout>

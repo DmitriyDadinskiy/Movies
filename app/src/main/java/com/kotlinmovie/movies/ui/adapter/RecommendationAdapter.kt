@@ -15,19 +15,17 @@ import com.squareup.picasso.Picasso
 
 class RecommendationAdapter(
     private var recommendationAdapterList: List<FilmsListRecommendation>,
-    private val onMovieClickRecommendation: (filmsListRecommendation: FilmsListRecommendation) -> Unit
-) :
+    private val onMovieClickRecommendation: (filmsListRecommendation:
+                                             FilmsListRecommendation) -> Unit) :
     RecyclerView.Adapter<RecommendationAdapter.RecommendationHolder>() {
 
     private var onClickListener: ClickOnRecommendationImage? = null
 
     inner class RecommendationHolder(item: View) : RecyclerView.ViewHolder(item) {
-        private val filmItemImageRecommendation: ImageView = itemView.findViewById(
-            R.id.film_recommendation_item_image
-        )
         private val binding = ItemRecommendationBinding.bind(item)
         private val filmRecommendationFavorites: ImageButton =
             binding.filmRecommendationCardFavoritesImageButton
+        private val filmItemImageRecommendation: ImageView = binding.filmRecommendationItemImage
 
         fun bind(recommendation: FilmsListRecommendation) = with(binding) {
 

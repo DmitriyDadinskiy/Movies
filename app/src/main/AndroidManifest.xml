@@ -16,7 +16,9 @@
         android:theme="@style/Theme.Movies">
         <service
             android:name=".domain.MyIntentServiceLog"
-            android:exported="false"></service>
+            android:exported="false">
+
+        </service>
 
         <receiver
             android:name=".data.ConnectivityManagerCheckInternet"

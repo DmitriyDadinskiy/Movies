@@ -11,7 +11,7 @@ import android.widget.Toast
 import java.io.*
 
 
-private const val TAG = "ServiceTAG"
+const val TAG = "ServiceTAG"
 const val MAIN_SERVICE_GET_EVENT = "MyIntentServiceGetEvent"
 
 

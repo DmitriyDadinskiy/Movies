@@ -2,10 +2,9 @@ package com.kotlinmovie.movies.data.retrofit
 
 import com.kotlinmovie.movies.domain.MovieResult
 import com.kotlinmovie.movies.domain.MovieResultTopRated
+import com.kotlinmovie.movies.domain.SearchResult
+import com.kotlinmovie.movies.ui.API_KEY
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -13,10 +12,20 @@ import retrofit2.http.Query
 
 
 interface TMDBRepoApi {
-    @GET("/3/movie/popular?api_key=feec2f259352fcecc420544fb3ba88de&language=ru&page=1")
+    @GET("movie/popular?api_key=feec2f259352fcecc420544fb3ba88de&language=ru&page=1&region=RU")
     fun loadReposFilmsListPopular(): Call<MovieResult>
 
-    @GET("/3/movie/top_rated?api_key=feec2f259352fcecc420544fb3ba88de&language=ru&page=1")
+    @GET("movie/top_rated?api_key=feec2f259352fcecc420544fb3ba88de&language=ru&page=1&region=RU")
     fun loadReposFilmsListTopRated(): Call<MovieResultTopRated>
 
+    @GET("search/movie")
+    fun loadReposSearchFilms(
+        @Query("api_key") api_key: String = API_KEY,
+        @Query("language") language: String = "ru",
+        @Query("query") query: String,
+        @Query("page") page: Int,
+        @Query("include_adult") includeAdult: Boolean,
+        @Query("region") region: String = "RU"
+    ): Call<SearchResult>
 }
+

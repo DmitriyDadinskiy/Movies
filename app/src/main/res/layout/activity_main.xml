@@ -2,102 +2,79 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="4dp"
     android:orientation="vertical"
-    android:id="@+id/activity_main"
+    android:padding="4dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.kotlinmovie.movies.ui.MainActivity"
     tools:showIn="@layout/activity_main">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/watching_now"
-        android:gravity="bottom"
-        android:textSize="@dimen/header_size" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/watching_now_recycler_view_"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_weight="1"
-        tools:listitem="@layout/item_watching_now" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="@string/watching_now"
+                android:textSize="@dimen/header_size" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/recommendations"
-        android:textSize="@dimen/header_size">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/watching_now_recycler_view_"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:layout_weight="1"
+                tools:listitem="@layout/item_watching_now" />
 
-    </TextView>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="@string/recommendations"
+                android:textSize="@dimen/header_size">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recommendation_recycler_view_"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_weight="1"
-        android:orientation="horizontal"
-        tools:listitem="@layout/item_recommendation" />
+            </TextView>
 
-</LinearLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recommendation_recycler_view_"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                tools:listitem="@layout/item_recommendation" />
+
+        </LinearLayout>
 
     </ScrollView>
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+    </FrameLayout>
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/design_bottom_sheet"
+        style="?attr/bottomSheetStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:alpha="0.8"
-        android:background="#DAD5D5"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/home_button"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/button_home" />
-
-        <Button
-            android:id="@+id/favorites_button"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/button_favorites" />
-
-        <Button
-            android:id="@+id/ratings_button"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/button_ratings" />
-
-    </LinearLayout>
-
+        android:layout_gravity="center_horizontal|top"
+        app:layout_behavior="@string/bottom_sheet_behavior"/>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/snackbar_layout"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

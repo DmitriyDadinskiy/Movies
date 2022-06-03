@@ -11,4 +11,10 @@
     <string name="films_card_budget">Бюджет:</string>
     <string name="film_card_feel">Сборы:</string>
     <string name="film_card_release_date">Дата релиза</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Настройки приложения</string>
+    <string name="fragment_settings_adult_switch">Включить взрослый контент</string>
+    <string name="notes_film">Тут можно оставить заметку о фильме</string>
+    <string name="clear_note">Очистить</string>
+    <string name="delete_note_film">Заметка удалена</string>
 </resources>
