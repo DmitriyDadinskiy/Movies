@@ -1,13 +1,16 @@
 package com.kotlinmovie.movies.ui
 
 
+import android.Manifest
 import android.app.SearchManager
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.SearchRecentSuggestions
+import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -15,8 +18,11 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -32,11 +38,12 @@ import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.RELEASE_DATE
 import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.TITLE
 import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.VOTE_AVERAGE
 import com.kotlinmovie.movies.ui.adapter.RecommendationAdapter
-
 import com.kotlinmovie.movies.ui.adapter.WatchingNowAdapter
+
 
 const val IMAGES_PATH = "https://image.tmdb.org/t/p/w342"
 const val API_KEY = "feec2f259352fcecc420544fb3ba88de"
+const val REQUEST_CODE_ACCESS_COARSE_LOCATION = 42
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -57,7 +64,6 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(receiver,
             IntentFilter(ConnectivityManager
                 .CONNECTIVITY_ACTION))//подписка на широковещательные сообщения
-
         init()
     }
 
@@ -66,14 +72,57 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+
     private fun init() {
         initViewWatchingNow()
         initViewRecommendation()
         startCardFilmFragment()
         initButton()
+        checkPermission()
 
     }
 
+    private fun checkPermission() {
+        applicationContext.let {
+            when {
+                ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                        PackageManager.PERMISSION_GRANTED -> {
+                }
+                shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION) -> {
+                    AlertDialog.Builder(this)
+                        .setTitle(getString(R.string.Access_to_geodata))
+                        .setMessage(getString(R.string.explanation_for_permission))
+                        .setPositiveButton(getString(R.string.positive_button_permission)) { _, _ ->
+                            requestPermission()
+                        }
+                        .setNeutralButton(getString(R.string.neutral_button_permission)) { _, _ ->
+                            openApplicationSettings()
+                        }
+                        .setNegativeButton(getString(R.string.negative_button_permission)) { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .create()
+                        .show()
+                }
+                else -> {
+                    requestPermission()
+                }
+            }
+        }
+    }
+    private fun requestPermission() {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                REQUEST_CODE_ACCESS_COARSE_LOCATION)
+    }
+    private  fun openApplicationSettings() {
+        Toast.makeText(applicationContext, "Включите доступ к геоданным",
+            Toast.LENGTH_LONG).show()
+        val appSettingsIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.parse("package:$packageName"))
+        startActivityForResult(appSettingsIntent, REQUEST_CODE_ACCESS_COARSE_LOCATION)
+    }
 
     private fun initButton() {
         mySnackbarLayout = binding.snackbarLayout
