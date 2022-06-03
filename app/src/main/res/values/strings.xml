@@ -17,4 +17,9 @@
     <string name="notes_film">Тут можно оставить заметку о фильме</string>
     <string name="clear_note">Очистить</string>
     <string name="delete_note_film">Заметка удалена</string>
+    <string name="Access_to_geodata">Дотсуп к геоданным</string>
+    <string name="explanation_for_permission">Нам нужны приблизительные геоданные для формирования списка фильмов подходящих для вашего региона</string>
+    <string name="positive_button_permission">Предоставить доступ</string>
+    <string name="neutral_button_permission">Перейти в настройки приложения</string>
+    <string name="negative_button_permission">Не предоставлять доступ</string>
 </resources>
