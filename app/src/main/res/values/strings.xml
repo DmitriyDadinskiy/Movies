@@ -10,7 +10,7 @@
     <string name="film_card_duration_textView">116 мин</string>
     <string name="films_card_budget">Бюджет:</string>
     <string name="film_card_feel">Сборы:</string>
-    <string name="film_card_release_date">Дата релиза</string>
+    <string name="film_card_release_date">Дата релиза:</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Настройки приложения</string>
     <string name="fragment_settings_adult_switch">Включить взрослый контент</string>
@@ -22,4 +22,5 @@
     <string name="positive_button_permission">Предоставить доступ</string>
     <string name="neutral_button_permission">Перейти в настройки приложения</string>
     <string name="negative_button_permission">Не предоставлять доступ</string>
+    <string name="Country">Страна:</string>
 </resources>

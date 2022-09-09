@@ -32,11 +32,6 @@ import com.kotlinmovie.movies.data.ConnectivityManagerCheckInternet
 import com.kotlinmovie.movies.databinding.ActivityMainBinding
 import com.kotlinmovie.movies.domain.*
 import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.ID
-import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.OVERVIEW
-import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.POSTER_PATCH
-import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.RELEASE_DATE
-import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.TITLE
-import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.VOTE_AVERAGE
 import com.kotlinmovie.movies.ui.adapter.RecommendationAdapter
 import com.kotlinmovie.movies.ui.adapter.WatchingNowAdapter
 
@@ -61,9 +56,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        registerReceiver(receiver,
-            IntentFilter(ConnectivityManager
-                .CONNECTIVITY_ACTION))//подписка на широковещательные сообщения
+        registerReceiver(
+            receiver,
+            IntentFilter(
+                ConnectivityManager
+                    .CONNECTIVITY_ACTION
+            )
+        )//подписка на широковещательные сообщения
         init()
     }
 
@@ -85,8 +84,10 @@ class MainActivity : AppCompatActivity() {
     private fun checkPermission() {
         applicationContext.let {
             when {
-                ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) ==
                         PackageManager.PERMISSION_GRANTED -> {
                 }
                 shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION) -> {
@@ -111,16 +112,24 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun requestPermission() {
-            ActivityCompat.requestPermissions(this,
-                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-                REQUEST_CODE_ACCESS_COARSE_LOCATION)
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+            REQUEST_CODE_ACCESS_COARSE_LOCATION
+        )
     }
-    private  fun openApplicationSettings() {
-        Toast.makeText(applicationContext, "Включите доступ к геоданным",
-            Toast.LENGTH_LONG).show()
-        val appSettingsIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-            Uri.parse("package:$packageName"))
+
+    private fun openApplicationSettings() {
+        Toast.makeText(
+            applicationContext, "Включите доступ к геоданным",
+            Toast.LENGTH_LONG
+        ).show()
+        val appSettingsIntent = Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.parse("package:$packageName")
+        )
         startActivityForResult(appSettingsIntent, REQUEST_CODE_ACCESS_COARSE_LOCATION)
     }
 
@@ -132,42 +141,41 @@ class MainActivity : AppCompatActivity() {
 
         startActivity(Intent(this@MainActivity, ActivityStartFilmsCard::class.java)
             .apply {
-                putExtra(POSTER_PATCH, filmsListWatchingNow.posterPath)
-                putExtra(TITLE, filmsListWatchingNow.title)
-                putExtra(VOTE_AVERAGE, filmsListWatchingNow.voteAverage)
-                putExtra(RELEASE_DATE, filmsListWatchingNow.releaseDate)
-                putExtra(OVERVIEW, filmsListWatchingNow.overview)
                 putExtra(ID, filmsListWatchingNow.id)
             })
 
         val intentServiceLog = Intent(this, MyIntentServiceLog::class.java)
         startService(
-            intentServiceLog.putExtra(MAIN_SERVICE_GET_EVENT,
+            intentServiceLog.putExtra(
+                MAIN_SERVICE_GET_EVENT,
                 "открыта карточка фильма ID ${filmsListWatchingNow.id} " +
                         "${filmsListWatchingNow.title}"
             )
         )
-        Toast.makeText(applicationContext, "${filmsListWatchingNow.title}",
-            Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            applicationContext, "${filmsListWatchingNow.title}",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     private fun startCardFilmsRecommendation(filmsListRecommendation: FilmsListRecommendation) {
 
         startActivity(Intent(this@MainActivity, ActivityStartFilmsCard::class.java)
             .apply {
-                putExtra(POSTER_PATCH, filmsListRecommendation.posterPath)
-                putExtra(TITLE, filmsListRecommendation.title)
-                putExtra(VOTE_AVERAGE, filmsListRecommendation.voteAverage)
-                putExtra(RELEASE_DATE, filmsListRecommendation.releaseDate)
-                putExtra(OVERVIEW, filmsListRecommendation.overview)
+                putExtra(ID, filmsListRecommendation.id)
             })
 
         val intentServiceLog = Intent(this, MyIntentServiceLog::class.java)
         startService(
-            intentServiceLog.putExtra(MAIN_SERVICE_GET_EVENT,
-                "открыта карточка фильма  ${filmsListRecommendation.title}"))
-        Toast.makeText(applicationContext, "${filmsListRecommendation.title}",
-            Toast.LENGTH_SHORT).show()
+            intentServiceLog.putExtra(
+                MAIN_SERVICE_GET_EVENT,
+                "открыта карточка фильма  ${filmsListRecommendation.title}"
+            )
+        )
+        Toast.makeText(
+            applicationContext, "${filmsListRecommendation.title}",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
 
@@ -253,7 +261,8 @@ class MainActivity : AppCompatActivity() {
             givRateFilmsTMDB.getPopularFilms(
                 onSuccess = ::gotListMoviesPopular,
             ) {
-                Snackbar.make(mySnackbarLayout,
+                Snackbar.make(
+                    mySnackbarLayout,
                     "ссылка не существует либо нет подлючения к интернету ${it.message}",
                     Snackbar.LENGTH_INDEFINITE
                 )
@@ -272,7 +281,8 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_info ->
-                Toast.makeText(applicationContext, "not realize",
+                Toast.makeText(
+                    applicationContext, "not realize",
                     Toast.LENGTH_SHORT
                 ).show()
 
@@ -293,15 +303,9 @@ class MainActivity : AppCompatActivity() {
         val searchInfo = searchManager.getSearchableInfo(componentName)
         searchView.setSearchableInfo(searchInfo)
 
-        searchView.setOnQueryTextListener(object  : SearchView.OnQueryTextListener{
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             @RequiresApi(Build.VERSION_CODES.N)
             override fun onQueryTextSubmit(newText: String?): Boolean {
-
-                dismissKeyboardShortcutsHelper()
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
                 supportFragmentManager
                     .beginTransaction()
                     .replace(R.id.design_bottom_sheet, SearchDialogFragment.newInstance())
@@ -309,6 +313,12 @@ class MainActivity : AppCompatActivity() {
                     .commit()
                 dataModel.sendingSearchRequest.value = newText
                 Log.d(TAG, "onQueryTextChange: $newText")
+                dismissKeyboardShortcutsHelper()
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+
                 return false
 
             }

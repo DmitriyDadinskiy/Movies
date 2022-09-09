@@ -1,12 +1,14 @@
 package com.kotlinmovie.movies.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.*
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.kotlinmovie.movies.R
 import com.kotlinmovie.movies.app
+import com.kotlinmovie.movies.data.movie.FilmCardEntity
 import com.kotlinmovie.movies.databinding.ActivityStartFilmsCardBinding
+import com.kotlinmovie.movies.domain.GivRateFilmsRepoTMDB
 import com.kotlinmovie.movies.room.model.NoteFilm
 import com.kotlinmovie.movies.room.model.NoteRepo
 import com.squareup.picasso.Picasso
@@ -15,20 +17,14 @@ class ActivityStartFilmsCard : AppCompatActivity() {
 
     private lateinit var binding: ActivityStartFilmsCardBinding
     private val noteRepo: NoteRepo by lazy { app.noteFilm }
+    private val givRateFilmsTMDB: GivRateFilmsRepoTMDB by lazy { app.givRateFilmsRepoTMDB }
 
     companion object {
-        const val POSTER_PATCH = "poster_patch"
-        const val TITLE = "title"
-        const val VOTE_AVERAGE = "voteAverage"
-        const val RELEASE_DATE = "releaseDate"
-        const val OVERVIEW = "overview"
         const val ID = "id_films"
     }
 
 
-    private lateinit var filmCardBannerImageView: ImageView
-
-     private var idFilms: Int = 1
+    private var idFilms: Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +36,7 @@ class ActivityStartFilmsCard : AppCompatActivity() {
     private fun init() {
         putFilmDetails()
         actionButtons()
+
     }
 
     private fun actionButtons() {
@@ -50,8 +47,7 @@ class ActivityStartFilmsCard : AppCompatActivity() {
             if (binding.noteLinearLayout.visibility != View.VISIBLE) {
                 getNoteFilm()
                 binding.noteLinearLayout.visibility = View.VISIBLE
-            }
-            else {
+            } else {
                 binding.noteLinearLayout.visibility = View.GONE
                 addNoteFilm()
             }
@@ -64,11 +60,13 @@ class ActivityStartFilmsCard : AppCompatActivity() {
                 runOnUiThread { binding.textNoteEditText.setText("") }
             }.start()
 
-            Toast.makeText(applicationContext, getString(R.string.delete_note_film),
+            Toast.makeText(
+                applicationContext, getString(R.string.delete_note_film),
                 Toast.LENGTH_SHORT
             ).show()
         }
     }
+
     private fun addNoteFilm() {
         val textNoteEditText = binding.textNoteEditText
         val textNote = textNoteEditText.text.toString()
@@ -106,18 +104,44 @@ class ActivityStartFilmsCard : AppCompatActivity() {
 
 
     private fun putFilmDetails() {
-        filmCardBannerImageView = binding.filmCardBannerImageView
         val putInfoFilms = intent.extras
         if (putInfoFilms != null) {
-            binding.filmCardNameTextView.text = putInfoFilms.getString(TITLE, "")
-            binding.filmCardRatingTextView.text = putInfoFilms.getDouble(VOTE_AVERAGE).toString()
-            binding.filmCardDateTextView.text = putInfoFilms.getString(RELEASE_DATE, "")
-            binding.filmCardDescriptionTextView.text = putInfoFilms.getString(OVERVIEW, "")
-            idFilms = putInfoFilms.getInt(ID,0)
-            Picasso.get().load(IMAGES_PATH + putInfoFilms.getString(POSTER_PATCH))
-                .into(filmCardBannerImageView)
-
+            idFilms = putInfoFilms.getInt(ID, 0)
         }
+        getMovieInfo()
+
 
     }
+
+
+    private fun getMovieInfo() {
+        givRateFilmsTMDB.getMovieInfo(
+            id = idFilms,
+            onSuccess = ::gotMovie,
+        ) {
+            Toast.makeText(
+                applicationContext, "нет подключения к ${it.message}",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private fun gotMovie(result: FilmCardEntity) {
+        val nameGenres = result.genres[0].name
+        val nameCountry = result.productionCountries[0].name
+        with(binding) {
+            filmCardNameTextView.text = result.title
+            filmCardRatingTextView.text = result.voteAverage.toString()
+            filmCardDateTextView.text = result.releaseDate
+            filmCardDescriptionTextView.text = result.overview
+            filmCardGenreTextView.text = nameGenres
+            filmCardBudgetDollarTextView.text = result.budget.toString()
+            filmCardFeesDollarTextView.text = result.revenue.toString()
+            filmCardVoteCountTextView.text = result.voteCount.toString()
+            Picasso.get().load(IMAGES_PATH + result.posterPath)
+                .into(filmCardBannerImageView)
+            filmCardCountryPasteTextView.text = nameCountry
+        }
+    }
+
 }

@@ -1,11 +1,13 @@
 package com.kotlinmovie.movies.data.retrofit
 
+import com.kotlinmovie.movies.data.movie.FilmCardEntity
 import com.kotlinmovie.movies.domain.MovieResult
 import com.kotlinmovie.movies.domain.MovieResultTopRated
 import com.kotlinmovie.movies.domain.SearchResult
 import com.kotlinmovie.movies.ui.API_KEY
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -27,5 +29,12 @@ interface TMDBRepoApi {
         @Query("include_adult") includeAdult: Boolean,
         @Query("region") region: String = "RU"
     ): Call<SearchResult>
+
+    @GET("movie/{id}")
+    fun loadReposMoviesInfo(
+        @Path("id") id: Int,
+        @Query("api_key") api_key: String = API_KEY,
+        @Query("language") language: String = "ru"
+    ): Call<FilmCardEntity>
 }
 

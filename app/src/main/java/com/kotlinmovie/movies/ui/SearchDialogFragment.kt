@@ -7,8 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -21,7 +19,6 @@ import com.kotlinmovie.movies.databinding.FragmentSearchDialogBinding
 import com.kotlinmovie.movies.domain.DataModel
 import com.kotlinmovie.movies.domain.FilmListSearch
 import com.kotlinmovie.movies.domain.GivRateFilmsRepoTMDB
-import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.TITLE
 import com.kotlinmovie.movies.ui.adapter.SearchFilmAdapter
 
 
@@ -51,7 +48,7 @@ class SearchDialogFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         mContext = context
-        _binding = FragmentSearchDialogBinding.inflate(inflater,container,false)
+        _binding = FragmentSearchDialogBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -94,31 +91,27 @@ class SearchDialogFragment : Fragment() {
         recyclerView.adapter = adapterSearchFilm
 
 
-            givRateFilmsTMDB.getSearchMoves(
-                searchMoviesPage,
-                searchQuery,
-                searchMoviesIncludeAdult,
-                onSuccess = :: gotListMoviesSearch
+        givRateFilmsTMDB.getSearchMoves(
+            searchMoviesPage,
+            searchQuery,
+            searchMoviesIncludeAdult,
+            onSuccess = ::gotListMoviesSearch
 
-            ) {
-                Toast.makeText(
-                    mContext,
-                    "ссылка не существует либо нет подлючения к интернету ${it.message}",
-                    Toast.LENGTH_LONG
-                ).show()
-                Log.e("TAG", "не работает ")
-            }
+        ) {
+            Toast.makeText(
+                mContext,
+                "ссылка не существует либо нет подлючения к интернету ${it.message}",
+                Toast.LENGTH_LONG
+            ).show()
+            Log.e("TAG", "не работает ")
+        }
 
 
     }
 
     private fun startResultSearchFilm(filmListSearch: FilmListSearch) {
-        startActivity(Intent(mContext,ActivityStartFilmsCard::class.java).apply {
-            putExtra(TITLE, filmListSearch.title)
-            putExtra(ActivityStartFilmsCard.POSTER_PATCH, filmListSearch.posterPath)
-            putExtra(ActivityStartFilmsCard.VOTE_AVERAGE, filmListSearch.voteAverage)
-            putExtra(ActivityStartFilmsCard.RELEASE_DATE, filmListSearch.releaseDate)
-            putExtra(ActivityStartFilmsCard.OVERVIEW, filmListSearch.overview)
+        startActivity(Intent(mContext, ActivityStartFilmsCard::class.java).apply {
+            putExtra(ActivityStartFilmsCard.ID, filmListSearch.id)
         })
 
 
@@ -128,10 +121,12 @@ class SearchDialogFragment : Fragment() {
             Toast.LENGTH_LONG
         ).show()
     }
-    private fun gotListMoviesSearch(result: MutableList<FilmListSearch>){
+
+    private fun gotListMoviesSearch(result: MutableList<FilmListSearch>) {
         binding.searchFilmProgressBar.visibility = View.INVISIBLE
         adapterSearchFilm.addMoveSearch(result)
     }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null

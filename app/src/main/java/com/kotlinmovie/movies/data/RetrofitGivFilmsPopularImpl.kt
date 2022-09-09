@@ -1,10 +1,15 @@
 package com.kotlinmovie.movies.data
 
+import com.kotlinmovie.movies.data.movie.FilmCardEntity
 import com.kotlinmovie.movies.data.retrofit.TMDBRepoApi
 import com.kotlinmovie.movies.domain.*
-import retrofit2.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Query
+import kotlin.reflect.KFunction1
+
 
 private const val BASE_URL = "https://api.themoviedb.org/3/"
 
@@ -23,7 +28,8 @@ class RetrofitGivFilmsPopularImpl : GivRateFilmsRepoTMDB {
 
         service.loadReposFilmsListPopular().enqueue(object : Callback<MovieResult> {
             override fun onResponse(
-                call: Call<MovieResult>, response: Response<MovieResult>
+                call: Call<MovieResult>,
+                response: Response<MovieResult>
             ) {
 
                 if (response.isSuccessful) {
@@ -92,6 +98,33 @@ class RetrofitGivFilmsPopularImpl : GivRateFilmsRepoTMDB {
             }
 
             override fun onFailure(call: Call<SearchResult>, t: Throwable) {
+                onError.invoke(Throwable())
+            }
+
+        })
+    }
+
+    override fun getMovieInfo(
+        id: Int,
+        onSuccess: KFunction1<FilmCardEntity, Unit>,
+        onError: (Throwable) -> Unit
+    ) {
+        service.loadReposMoviesInfo(id).enqueue(object : Callback<FilmCardEntity> {
+            override fun onResponse(
+                call: Call<FilmCardEntity>,
+                response: Response<FilmCardEntity>
+            ) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        onSuccess.invoke(responseBody)
+                    } else {
+                        onError.invoke(Throwable())
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<FilmCardEntity>, t: Throwable) {
                 onError.invoke(Throwable())
             }
 
