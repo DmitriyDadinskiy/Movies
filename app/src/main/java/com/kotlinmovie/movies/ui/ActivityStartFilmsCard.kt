@@ -36,6 +36,7 @@ class ActivityStartFilmsCard : AppCompatActivity() {
     private fun init() {
         putFilmDetails()
         actionButtons()
+        viewLocationCountry()
 
     }
 
@@ -141,6 +142,14 @@ class ActivityStartFilmsCard : AppCompatActivity() {
             Picasso.get().load(IMAGES_PATH + result.posterPath)
                 .into(filmCardBannerImageView)
             filmCardCountryPasteTextView.text = nameCountry
+        }
+    }
+    private fun viewLocationCountry(){
+        binding.filmCardCountryPasteTextView.setOnClickListener {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.fragment_container_films_card, MapsFragmentLocationCountry())
+                .commit()
         }
     }
 

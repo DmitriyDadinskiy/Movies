@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
+import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
 import com.kotlinmovie.movies.R
 import com.kotlinmovie.movies.databinding.ItemWatchingNowBinding
@@ -22,6 +23,7 @@ class WatchingNowAdapter(
     private var onClickListenerWatchingNowImageButton: CLickOnWatchingNowImage? = null
 
 
+
     inner class WatchingHolder(item: View) : RecyclerView.ViewHolder(item) {
         private val filmItemImageView: ImageView = itemView.findViewById(R.id.film_item_imageView)
         private val filmWatchingNowFavorites: ImageButton =
@@ -36,7 +38,6 @@ class WatchingNowAdapter(
             filmNameItemTextView.text = filmsListWatchingNow.title
             yearFilmTextView.text = filmsListWatchingNow.releaseDate
             ratingTextView.text = filmsListWatchingNow.voteAverage.toString()
-
             filmItemImageView.setOnClickListener { onMovieClick.invoke(filmsListWatchingNow) }
         }
 
