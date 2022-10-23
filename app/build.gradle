@@ -19,6 +19,12 @@ android {
     buildFeatures{
         viewBinding = true
     }
+    buildTypes.each {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("apikey.properties").newDataInputStream())
+        def yandexMapKitApiKey  = properties.getProperty("YANDEX_MapKit_API_KEY", "")
+        it.buildConfigField "String", "YANDEX_MapKit_API_KEY", yandexMapKitApiKey
+    }
 
     buildTypes {
         release {
@@ -33,6 +39,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    namespace 'com.kotlinmovie.movies'
 }
 
 dependencies {
@@ -58,9 +65,7 @@ dependencies {
     implementation 'androidx.room:room-runtime:2.4.2'
     kapt 'androidx.room:room-compiler:2.4.2'
 
-    implementation 'com.google.android.gms:play-services-maps:18.1.0'
-
-
+    implementation 'com.yandex.android:maps.mobile:4.2.0-full'
 
 
 }

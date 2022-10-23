@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.kotlinmovie.movies.BuildConfig
 import com.kotlinmovie.movies.R
 import com.kotlinmovie.movies.app
 import com.kotlinmovie.movies.data.movie.FilmCardEntity
@@ -12,6 +13,7 @@ import com.kotlinmovie.movies.domain.GivRateFilmsRepoTMDB
 import com.kotlinmovie.movies.room.model.NoteFilm
 import com.kotlinmovie.movies.room.model.NoteRepo
 import com.squareup.picasso.Picasso
+import com.yandex.mapkit.MapKitFactory
 
 class ActivityStartFilmsCard : AppCompatActivity() {
 
@@ -148,7 +150,8 @@ class ActivityStartFilmsCard : AppCompatActivity() {
         binding.filmCardCountryPasteTextView.setOnClickListener {
             supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.fragment_container_films_card, MapsFragmentLocationCountry())
+                .replace(R.id.fragment_container_films_card, MapYandexFragment.newInstance())
+                .addToBackStack("")
                 .commit()
         }
     }

@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import com.kotlinmovie.movies.BuildConfig
 import com.kotlinmovie.movies.R
 import com.kotlinmovie.movies.app
 import com.kotlinmovie.movies.data.ConnectivityManagerCheckInternet
@@ -34,6 +35,7 @@ import com.kotlinmovie.movies.domain.*
 import com.kotlinmovie.movies.ui.ActivityStartFilmsCard.Companion.ID
 import com.kotlinmovie.movies.ui.adapter.RecommendationAdapter
 import com.kotlinmovie.movies.ui.adapter.WatchingNowAdapter
+import com.yandex.mapkit.MapKitFactory
 
 
 const val IMAGES_PATH = "https://image.tmdb.org/t/p/w342"
@@ -55,6 +57,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        MapKitFactory.setApiKey(BuildConfig.YANDEX_MapKit_API_KEY)
         setContentView(binding.root)
         registerReceiver(
             receiver,
