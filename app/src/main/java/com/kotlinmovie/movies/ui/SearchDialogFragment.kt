@@ -100,7 +100,7 @@ class SearchDialogFragment : Fragment() {
         ) {
             Toast.makeText(
                 mContext,
-                "ссылка не существует либо нет подлючения к интернету ${it.message}",
+                "ссылка не существует либо нет подключения к интернету ${it.message}",
                 Toast.LENGTH_LONG
             ).show()
             Log.e("TAG", "не работает ")

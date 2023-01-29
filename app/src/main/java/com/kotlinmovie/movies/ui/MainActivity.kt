@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
                 ) ==
                         PackageManager.PERMISSION_GRANTED -> {
                 }
-                shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION) -> {
+                shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
                     AlertDialog.Builder(this)
                         .setTitle(getString(R.string.Access_to_geodata))
                         .setMessage(getString(R.string.explanation_for_permission))
@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity() {
     private fun requestPermission() {
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
             REQUEST_CODE_ACCESS_COARSE_LOCATION
         )
     }
@@ -266,7 +266,7 @@ class MainActivity : AppCompatActivity() {
             ) {
                 Snackbar.make(
                     mySnackbarLayout,
-                    "ссылка не существует либо нет подлючения к интернету ${it.message}",
+                    "ссылка не существует либо нет подключения к интернету ${it.message}",
                     Snackbar.LENGTH_INDEFINITE
                 )
                     .setDuration(10000)
